@@ -66,11 +66,11 @@ class BootDQNAgent(DQNLikeAgent):
             action,
             transition.state,
             transition.reward,
-            transiiton.terminal,
+            transition.terminal,
             mask,
         )
         # If the episode ends, change the executing policy
-        if terminal:
+        if transition.terminal:
             self.active_head = np.random.randint(self.config.num_ensembles)
 
     @torch.no_grad()

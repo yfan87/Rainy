@@ -241,10 +241,10 @@ class DQNLikeAgent(Agent, Generic[State, Action, ReplayFeed]):
         self,
         state: State,
         action: Action,
-        transiiton: EnvTransition,
+        transition: EnvTransition,
     ) -> None:
         self.replay.append(
-            state, action, transiiton.state, transition.reward, transiiton.terminal
+            state, action, transition.state, transition.reward, transition.terminal
         )
 
     @property
@@ -262,8 +262,9 @@ class DQNLikeAgent(Agent, Generic[State, Action, ReplayFeed]):
         reward_scale = self.config.reward_scale
         while True:
             action = self.action(state)
-            transition = replace(transition, rewards=transition.rewards * reward_scale)
-            self.store_transition(state, action, transiiton)
+            transition = self.env.step(action)
+            # transition = replace(transition, rewards=transition.rewards * reward_scale)
+            self.store_transition(state, action, transition)
             if self.train_started and self.total_steps % self.config.update_freq == 0:
                 self.train(self.replay.sample(self.config.replay_batch_size))
                 self.update_steps += 1
